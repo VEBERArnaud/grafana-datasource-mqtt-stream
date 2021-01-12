@@ -1,0 +1,39 @@
+{
+  "type": "datasource",
+  "name": "mqtt-stream",
+  "id": "veber-arnaud-mqtt-stream-datasource",
+  "metrics": true,
+  "info": {
+    "description": "MQTT Stream Datasource",
+    "author": {
+      "name": "VEBER Arnaud",
+      "url": "https://github.com/VEBERArnaud"
+    },
+    "keywords": [
+      "mqtt",
+      "stream",
+      "datasource"
+    ],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/grafana/simple-datasource"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/grafana/simple-datasource/blob/master/LICENSE"
+      }
+    ],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaVersion": "6.5.x",
+    "plugins": []
+  }
+}
