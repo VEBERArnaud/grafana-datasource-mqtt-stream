@@ -3,6 +3,7 @@
   "name": "mqtt-stream",
   "id": "veber-arnaud-mqtt-stream-datasource",
   "metrics": true,
+  "streaming": true,
   "info": {
     "description": "MQTT Stream Datasource",
     "author": {

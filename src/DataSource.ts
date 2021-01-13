@@ -5,35 +5,58 @@ import {
   DataQueryResponse,
   DataSourceApi,
   DataSourceInstanceSettings,
-  MutableDataFrame,
+  CircularDataFrame,
   FieldType,
 } from '@grafana/data';
+
+import { Observable, merge } from 'rxjs';
+
+import mqtt from 'mqtt';
 
 import { MyQuery, MyDataSourceOptions, defaultQuery } from './types';
 
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
+  url?: string;
+
   constructor(instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>) {
     super(instanceSettings);
+
+    this.url = instanceSettings.jsonData.url || '';
   }
 
-  async query(options: DataQueryRequest<MyQuery>): Promise<DataQueryResponse> {
-    const { range } = options;
-    const from = range!.from.valueOf();
-    const to = range!.to.valueOf();
-
-    // Return a constant for each query.
-    const data = options.targets.map(target => {
+  query(options: DataQueryRequest<MyQuery>): Observable<DataQueryResponse> {
+    const observables = options.targets.map(target => {
       const query = defaults(target, defaultQuery);
-      return new MutableDataFrame({
-        refId: query.refId,
-        fields: [
-          { name: 'Time', values: [from, to], type: FieldType.time },
-          { name: 'Value', values: [query.constant, query.constant], type: FieldType.number },
-        ],
+
+      return new Observable<DataQueryResponse>(subscriber => {
+        const frame = new CircularDataFrame({
+          append: 'tail',
+          capacity: 5000,
+        });
+
+        frame.refId = query.refId;
+        frame.addField({ name: 'time', type: FieldType.time });
+        frame.addField({ name: 'value', type: FieldType.number });
+
+        const client = mqtt.connect(this.url || '');
+
+        client.on('connect', () => {
+          client.subscribe(query.topic);
+        });
+
+        client.on('message', (topic: any, message: any) => {
+          const { time, value } = JSON.parse(message);
+          frame.add({ time, value });
+
+          subscriber.next({
+            data: [frame],
+            key: query.refId,
+          });
+        });
       });
     });
 
-    return { data };
+    return merge(...observables);
   }
 
   async testDatasource() {
