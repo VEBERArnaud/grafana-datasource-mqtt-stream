@@ -14,14 +14,18 @@
     "@grafana/data": "^7.0.0",
     "@grafana/toolkit": "^7.0.0",
     "@grafana/ui": "^7.0.0",
-    "@types/lodash": "latest",
     "@testing-library/jest-dom": "5.4.0",
-    "@testing-library/react": "^10.0.2"
+    "@testing-library/react": "^10.0.2",
+    "@types/lodash": "latest",
+    "@types/node": "^14.14.20"
   },
   "engines": {
     "node": ">=12 <13"
   },
   "resolutions": {
     "rxjs": "6.6.3"
+  },
+  "dependencies": {
+    "mqtt": "^4.2.6"
   }
 }
